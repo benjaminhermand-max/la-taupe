@@ -2,7 +2,7 @@
  * Réseau d'abord (pour toujours avoir la dernière version),
  * cache en secours (pour jouer sans connexion).
  */
-var CACHE = 'la-taupe-v6';
+var CACHE = 'la-taupe-v7';
 var FILES = [
   './', 'index.html', 'paires.js', 'manifest.json',
   'assets/icone-192.png', 'assets/icone-512.png', 'assets/favicon.png',
