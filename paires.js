@@ -169,6 +169,38 @@ window.LA_TAUPE_THEMES = [
     ]
   },
   {
+    id: "festival", nom: "Festival de musique", groupe: "Grand public",
+    paires: [
+      ["Scène", "Backstage", "F"],
+      ["Tente", "Camping-car", "F"],
+      ["Bracelet", "Billet", "F"],
+      ["Bouchons d'oreilles", "Casque anti-bruit", "F"],
+      ["Gobelet réutilisable", "Gourde", "F"],
+      ["Foodtruck", "Buvette", "F"],
+      ["Pluie", "Boue", "F"],
+      ["Tête d'affiche", "Première partie", "F"],
+      ["Fosse", "Gradins", "F"],
+      ["Bénévole", "Saisonnier", "F"],
+      ["Pogo", "Slam", "M"],
+      ["Rappel", "Final", "M"],
+      ["Balance", "Répétition", "M"],
+      ["Ingé son", "Ingé lumière", "M"],
+      ["Camping", "Glamping", "M"],
+      ["Navette", "Covoiturage", "M"],
+      ["Fumigène", "Canon à confettis", "M"],
+      ["Stand merch", "Stand de disques", "M"],
+      ["Agent de sécurité", "Secouriste", "M"],
+      ["Paléo Festival", "Montreux Jazz Festival", "E"],
+      ["Les Vieilles Charrues", "Les Eurockéennes", "E"],
+      ["Hellfest", "Download Festival", "E"],
+      ["Coachella", "Tomorrowland", "E"],
+      ["Retours de scène", "Façade", "E"],
+      ["Régie son", "Régie lumière", "E"],
+      ["Cashless", "Jetons", "E"],
+      ["After", "Warm-up", "E"],
+    ]
+  },
+  {
     id: "metiers", nom: "Métiers", groupe: "Grand public",
     paires: [
       ["Pompier", "Policier", "F"],
