@@ -146,12 +146,15 @@ var S = {
   themesOn: load('themesOn', defaultThemes),
   history: load('history', {}),
   manche: load('manche', 0),
+  starts: load('starts', {}),
+  lastStarter: load('lastStarter', null),
   round: null,
   ui: {}
 };
 function persist() {
   save('players', S.players); save('settings', S.settings); save('themesOn', S.themesOn);
   save('history', S.history); save('manche', S.manche);
+  save('starts', S.starts); save('lastStarter', S.lastStarter);
 }
 
 /* =========================================================
@@ -269,7 +272,12 @@ function startRound() {
   if (setup.fantome) roles[ids[k++]] = 'fantome';
   for (; k < ids.length; k++) roles[ids[k]] = 'agent';
   S.manche++;
+  // La distribution démarre à chaque manche par le joueur suivant (comme un donneur aux cartes)
+  var n = S.players.length, off = (S.manche - 1) % n;
+  var distOrder = S.players.map(function (p) { return p.id; });
+  distOrder = distOrder.slice(off).concat(distOrder.slice(0, off));
   S.round = {
+    distOrder: distOrder,
     theme: chosen.theme, level: chosen.pair[2],
     agentsWord: swap ? chosen.pair[1] : chosen.pair[0],
     taupeWord: swap ? chosen.pair[0] : chosen.pair[1],
@@ -293,9 +301,28 @@ function isIntruder(id) { return S.round.roles[id] !== 'agent'; }
 function aliveIntruders() { return S.round.alive.filter(isIntruder); }
 function aliveAgents() { return S.round.alive.filter(function (id) { return !isIntruder(id); }); }
 
+/* Premier à parler : tiré au sort parmi ceux qui ont le moins souvent commencé,
+   jamais le Fantôme, et si possible ni le premier de la manche précédente
+   ni celui qui a reçu le téléphone en premier. */
+function chooseStarter(alive) {
+  var r = S.round;
+  var cand = alive.filter(function (id) { return r.roles[id] !== 'fantome'; });
+  if (!cand.length) cand = alive.slice();
+  var avoid = [S.lastStarter, r.distOrder[0]];
+  var pool = cand.filter(function (id) { return avoid.indexOf(id) < 0; });
+  if (!pool.length) pool = cand.filter(function (id) { return id !== S.lastStarter; });
+  if (!pool.length) pool = cand;
+  var min = Math.min.apply(null, pool.map(function (id) { return S.starts[id] || 0; }));
+  pool = pool.filter(function (id) { return (S.starts[id] || 0) === min; });
+  var first = pick(pool);
+  S.starts[first] = (S.starts[first] || 0) + 1;
+  S.lastStarter = first;
+  persist();
+  return first;
+}
 function setupClues(tours) {
-  var order = shuffle(S.round.alive);
-  if (S.round.roles[order[0]] === 'fantome' && order.length > 1) { var t = order[0]; order[0] = order[1]; order[1] = t; }
+  var first = chooseStarter(S.round.alive);
+  var order = [first].concat(shuffle(S.round.alive.filter(function (id) { return id !== first; })));
   S.round.clue = { tour: 1, tours: tours, order: order, idx: 0, running: false, left: S.settings.chrono, timedOut: false };
   go('clue');
 }
@@ -563,8 +590,8 @@ V.noPairs = function () {
 };
 
 V.pass = function () {
-  var r = S.round, p = S.players[r.dist.idx];
-  var dots = S.players.map(function (x, i) {
+  var r = S.round, p = player(r.distOrder[r.dist.idx]);
+  var dots = r.distOrder.map(function (x, i) {
     var col = i < r.dist.idx ? 'var(--blue)' : (i === r.dist.idx ? 'var(--yellow)' : 'var(--line)');
     return '<span style="flex:1;max-width:28px;height:6px;border-radius:3px;background:' + col + '"></span>';
   }).join('');
@@ -579,7 +606,7 @@ V.pass = function () {
 };
 
 V.word = function () {
-  var r = S.round, p = S.players[r.dist.idx], role = r.roles[p.id], d = r.dist;
+  var r = S.round, p = player(r.distOrder[r.dist.idx]), role = r.roles[p.id], d = r.dist;
   var inner;
   if (!d.open) {
     inner = '<span class="col" style="align-items:center;gap:12px">' + ICON.lockDark +
