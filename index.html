@@ -452,18 +452,46 @@ function endRound(winner) {
 /* =========================================================
    Navigation et rendu
    ========================================================= */
-function go(screen) {
+/* Écrans hors partie : le bouton retour du téléphone y ramène à l'écran précédent */
+var MENU_SCREENS = ['home', 'rules', 'briefing', 'themes', 'noPairs', 'podium'];
+var navStack = [];
+function go(screen, isBack) {
   if (screen !== 'clue') stopClueTimer();
   if (S.screen === 'pointez' && screen !== 'pointez') stopPointez();
+  if (screen === 'home') navStack = [];
+  else if (!isBack && screen !== S.screen && MENU_SCREENS.indexOf(S.screen) >= 0 && MENU_SCREENS.indexOf(screen) >= 0) {
+    navStack.push(S.screen); if (navStack.length > 20) navStack.shift();
+  }
   S.screen = screen;
   render();
   window.scrollTo(0, 0);
   if (screen === 'clue') scheduleAutoGo();
 }
+function leaveGame() { stopClueTimer(); stopPointez(); S.round = null; keepAwake(false); go('home', true); }
 function quitGame() {
   if (!confirm('Quitter la partie en cours ? Les scores sont conservés.')) return;
-  stopClueTimer(); S.round = null; keepAwake(false); go('home');
+  leaveGame();
 }
+/* Bouton retour du téléphone. Renvoie false quand on est à l'accueil : on laisse alors sortir de l'appli. */
+function handleBack() {
+  if (S.round && MENU_SCREENS.indexOf(S.screen) < 0) {
+    if (S.screen === 'word') { S.round.dist.open = false; go('pass', true); return true; }
+    if (S.screen === 'roundEnd') { leaveGame(); return true; }
+    quitGame();
+    return true;
+  }
+  if (S.screen === 'home') return false;
+  go(navStack.pop() || 'home', true);
+  return true;
+}
+try {
+  history.replaceState({ laTaupe: 'base' }, '');
+  history.pushState({ laTaupe: 'app' }, '');
+  window.addEventListener('popstate', function () {
+    if (handleBack()) history.pushState({ laTaupe: 'app' }, '');
+    else history.back();
+  });
+} catch (e) {}
 function gameTop(label) {
   return '<div class="top"><span class="mono">' + label + '</span>' +
     '<button class="icon-btn" data-act="quit" aria-label="Quitter la partie">' + ICON.close + '</button></div>';
