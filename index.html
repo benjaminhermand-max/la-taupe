@@ -148,13 +148,14 @@ var S = {
   manche: load('manche', 0),
   starts: load('starts', {}),
   lastStarter: load('lastStarter', null),
+  lastDistFirst: load('lastDistFirst', null),
   round: null,
   ui: {}
 };
 function persist() {
   save('players', S.players); save('settings', S.settings); save('themesOn', S.themesOn);
   save('history', S.history); save('manche', S.manche);
-  save('starts', S.starts); save('lastStarter', S.lastStarter);
+  save('starts', S.starts); save('lastStarter', S.lastStarter); save('lastDistFirst', S.lastDistFirst);
 }
 
 /* =========================================================
@@ -272,10 +273,14 @@ function startRound() {
   if (setup.fantome) roles[ids[k++]] = 'fantome';
   for (; k < ids.length; k++) roles[ids[k]] = 'agent';
   S.manche++;
-  // La distribution démarre à chaque manche par le joueur suivant (comme un donneur aux cartes)
-  var n = S.players.length, off = (S.manche - 1) % n;
-  var distOrder = S.players.map(function (p) { return p.id; });
-  distOrder = distOrder.slice(off).concat(distOrder.slice(0, off));
+  // Ordre de distribution des mots tiré au sort, sans redonner le téléphone
+  // en premier au même joueur que la manche précédente
+  var distOrder = shuffle(S.players.map(function (p) { return p.id; }));
+  if (distOrder.length > 1 && distOrder[0] === S.lastDistFirst) {
+    var j = 1 + Math.floor(Math.random() * (distOrder.length - 1));
+    var tmp = distOrder[0]; distOrder[0] = distOrder[j]; distOrder[j] = tmp;
+  }
+  S.lastDistFirst = distOrder[0];
   S.round = {
     distOrder: distOrder,
     theme: chosen.theme, level: chosen.pair[2],
