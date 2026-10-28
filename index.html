@@ -11,10 +11,18 @@
 <link rel="apple-touch-icon" href="assets/icone-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="preload" href="assets/fonts/big-shoulders-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Polices intégrées au jeu (licence SIL OFL, voir assets/fonts) : elles marchent sans connexion */
+@font-face{font-family:'Big Shoulders Display';font-weight:700;font-style:normal;font-display:swap;src:url(assets/fonts/big-shoulders-display-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Big Shoulders Display';font-weight:900;font-style:normal;font-display:swap;src:url(assets/fonts/big-shoulders-display-latin-900-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;font-style:normal;font-display:swap;src:url(assets/fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:600;font-style:normal;font-display:swap;src:url(assets/fonts/ibm-plex-mono-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;font-display:swap;src:url(assets/fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-style:normal;font-display:swap;src:url(assets/fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;font-display:swap;src:url(assets/fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;font-display:swap;src:url(assets/fonts/inter-latin-700-normal.woff2) format('woff2')}
 :root{
   --bg:#10131C; --surface:#1A1F2C; --surface2:#252B3A; --line:#2A3142; --line2:#3A4256;
   --text:#EDE6D6; --text2:#C9CFDB; --muted:#9AA3B5;
@@ -70,6 +78,8 @@ a{color:var(--yellow)}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--text2);font-weight:600;font-size:13px}
 .chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.chip.tgt{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 6px;color:var(--text)}
+.chip.tgt.on-red{background:#2A1A1A;border:2px solid var(--red);color:var(--text)}
 .input{flex:1;min-width:0;height:50px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--text);padding:0 14px;font:inherit;font-size:16px}
 .input:focus{outline:2px solid var(--yellow);outline-offset:1px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -110,6 +120,26 @@ a{color:var(--yellow)}
 .rules ul{padding-left:20px;margin:4px 0}
 .flash{animation:flash .6s ease 2}
 @keyframes flash{50%{background:#3a1a1a}}
+/* Révélation */
+.suspense-avatar{animation:shake .5s ease-in-out infinite}
+@keyframes shake{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-4px) rotate(-2deg)}75%{transform:translateX(4px) rotate(2deg)}}
+.scanbar{width:220px;height:6px;border-radius:3px;background:var(--surface);overflow:hidden}
+.scanbar span{display:block;height:6px;width:0;background:var(--yellow);animation:scan 2.1s ease-in forwards}
+@keyframes scan{to{width:100%}}
+.dots::after{content:'';animation:dots 1s steps(4) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+.stamp.slam{transform:rotate(12deg);animation:slam .45s cubic-bezier(.2,1.6,.4,1) both;animation-delay:.15s;background:rgba(26,31,44,.85)}
+@keyframes slam{0%{opacity:0;transform:scale(3.2) rotate(-8deg)}70%{opacity:1;transform:scale(.92) rotate(14deg)}100%{opacity:1;transform:scale(1) rotate(12deg)}}
+.reveal-title{animation:pop .4s ease both}
+@keyframes pop{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
+/* Fenêtre de confirmation maison */
+.modal-back{position:fixed;inset:0;background:rgba(6,8,12,.72);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding:16px;padding-bottom:calc(env(safe-area-inset-bottom) + 16px);animation:fadeIn .15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:448px;background:var(--surface);border:1px solid var(--line2);border-radius:20px;padding:22px 18px 18px;display:flex;flex-direction:column;gap:14px;animation:rise .2s ease}
+@keyframes rise{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.modal h2{margin:0;font-family:var(--display);font-weight:900;font-size:32px;line-height:1}
+.modal p{margin:0;font-size:15px;line-height:1.5;color:var(--text2)}
+@media (prefers-reduced-motion: reduce){.suspense-avatar,.stamp.slam,.reveal-title,.modal,.modal-back{animation:none}.scanbar span{animation-duration:.01s}}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);background:var(--text);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;z-index:10;max-width:90vw;text-align:center}
 @media (prefers-reduced-motion: reduce){.screen{animation:none}}
 </style>
@@ -142,7 +172,7 @@ var S = {
   screen: 'home',
   players: load('players', []),
   settings: Object.assign({ mode: 'recrue', taupes: 1, fantome: true, tours: 2, chrono: 20, autoGo: false,
-    niveaux: { F: true, M: true, E: true } }, load('settings', {})),
+    niveaux: { F: true, M: true, E: true }, debat: 0 }, load('settings', {})),
   themesOn: load('themesOn', defaultThemes),
   history: load('history', {}),
   manche: load('manche', 0),
@@ -166,14 +196,45 @@ function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { va
 function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
 function player(id) { for (var i = 0; i < S.players.length; i++) if (S.players[i].id === id) return S.players[i]; return null; }
 function initial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
+/* Sigle unique par joueur : 1 lettre, ou 2 si deux noms commencent pareil (Léa → LÉ, Lucas → LU) */
+var badgeCache = { key: '', map: {} };
+function badge(p) {
+  var key = S.players.map(function (x) { return x.id + x.name; }).join('|');
+  if (badgeCache.key !== key) {
+    var map = {}, letters = function (n) { return Array.from((n || '?').trim().replace(/\s+/g, '')); };
+    var cands = function (n) {
+      var L = letters(n), up = function (s) { return s.toUpperCase(); }, out = [up(L[0] || '?')];
+      if (L[1]) out.push(up(L[0] + L[1]));
+      if (L.length > 2) out.push(up(L[0] + L[L.length - 1]));
+      for (var i = 2; i < L.length; i++) out.push(up(L[0] + L[i]));
+      return out;
+    };
+    var clash = function (c, level) {
+      return S.players.filter(function (x) { var k = cands(x.name); return (k[Math.min(level, k.length - 1)]) === c; }).length > 1;
+    };
+    S.players.forEach(function (x) {
+      var k = cands(x.name), chosen = null;
+      for (var lv = 0; lv < k.length && !chosen; lv++) {
+        var used = Object.keys(map).map(function (id) { return map[id]; });
+        if (!clash(k[lv], lv) && used.indexOf(k[lv]) < 0) chosen = k[lv];
+        else if (lv > 0 && used.indexOf(k[lv]) < 0 && !S.players.some(function (y) { return y.id !== x.id && cands(y.name)[0] === k[0] && !map[y.id] && cands(y.name)[lv] === k[lv]; })) chosen = k[lv];
+      }
+      map[x.id] = chosen || (k[0] + (S.players.indexOf(x) + 1));
+    });
+    badgeCache = { key: key, map: map };
+  }
+  return badgeCache.map[p.id] || initial(p.name);
+}
+function badgeScale(txt) { return Array.from(txt).length > 1 ? 0.78 : 1; }
 function pairKey(themeId, p) { return themeId + '|' + [p[0], p[1]].sort().join('|'); }
 function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, ''); }
 function avatar(p, size) {
-  size = size || 32;
-  return '<span class="avatar" style="background:' + p.color + ';width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * 0.44) + 'px" aria-hidden="true">' + esc(initial(p.name)) + '</span>';
+  size = size || 32; var b = badge(p);
+  return '<span class="avatar" style="background:' + p.color + ';width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * 0.44 * badgeScale(b)) + 'px;letter-spacing:-.5px" aria-hidden="true">' + esc(b) + '</span>';
 }
 function bigAvatar(p, size) {
-  return '<span class="big-avatar" style="background:' + p.color + ';width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * 0.56) + 'px" aria-hidden="true">' + esc(initial(p.name)) + '</span>';
+  var b = badge(p);
+  return '<span class="big-avatar" style="background:' + p.color + ';width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * 0.56 * badgeScale(b)) + 'px" aria-hidden="true">' + esc(b) + '</span>';
 }
 var ICON = {
   back: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>',
@@ -186,6 +247,43 @@ var ICON = {
   eyeOff: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6.1A10 10 0 0 1 12 6c5 0 9 6 9 6a17 17 0 0 1-3 3.6M6.5 7.5C4.3 9.1 3 12 3 12s4 6 9 6a9 9 0 0 0 4-1"/></svg>',
   ghost: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#10131C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V10a7 7 0 0 1 14 0v11l-2.5-2-2.3 2-2.2-2-2.2 2-2.3-2z"/><circle cx="9.5" cy="10.5" r="1"/><circle cx="14.5" cy="10.5" r="1"/></svg>'
 };
+/* Fenêtre de confirmation au style du jeu (remplace confirm() du navigateur) */
+var openModal = null;
+function ask(opts) {
+  return new Promise(function (resolve) {
+    if (openModal) openModal.close(false);
+    var back = document.createElement('div');
+    back.className = 'modal-back';
+    back.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">' +
+      '<h2 id="mTitle">' + esc(opts.title) + '</h2>' + (opts.text ? '<p>' + esc(opts.text) + '</p>' : '') +
+      '<div class="grid2" style="margin-top:4px"><button class="btn ghost" data-m="0">' + esc(opts.cancel || 'Annuler') + '</button>' +
+      '<button class="btn' + (opts.danger ? ' red' : '') + '" data-m="1">' + esc(opts.ok || 'Confirmer') + '</button></div></div>';
+    var prevFocus = document.activeElement;
+    function close(val) {
+      if (!back.parentNode) return;
+      back.remove(); document.removeEventListener('keydown', onKey, true); openModal = null;
+      try { if (prevFocus && prevFocus.focus) prevFocus.focus(); } catch (e) {}
+      resolve(val);
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(false); }
+      if (e.key === 'Tab') {
+        var b = back.querySelectorAll('button'), first = b[0], last = b[b.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+    back.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-m]');
+      if (b) { e.stopPropagation(); close(b.getAttribute('data-m') === '1'); }
+      else if (e.target === back) close(false);
+    });
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(back);
+    openModal = { close: close };
+    back.querySelector('[data-m="1"]').focus();
+  });
+}
 function toast(msg) {
   var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
   document.body.appendChild(t); setTimeout(function () { t.remove(); }, 2600);
@@ -296,6 +394,22 @@ function startRound() {
   keepAwake(true);
   go('pass');
 }
+/* Mot inconnu : nouvelle paire (même thème si possible), mêmes rôles, distribution relancée */
+function replaceWord() {
+  var r = S.round, pool = availablePairs();
+  if (!pool.length) { toast('Plus aucune paire disponible dans tes thèmes.'); return; }
+  var same = pool.filter(function (x) { return x.theme.id === r.theme.id; });
+  var chosen = pick(same.length ? same : pool);
+  S.history[pairKey(chosen.theme.id, chosen.pair)] = Date.now();
+  var swap = Math.random() < 0.5;
+  r.theme = chosen.theme; r.level = chosen.pair[2];
+  r.agentsWord = swap ? chosen.pair[1] : chosen.pair[0];
+  r.taupeWord = swap ? chosen.pair[0] : chosen.pair[1];
+  r.dist = { idx: 0, open: false, seen: false };
+  r.wordChanged = true;
+  persist();
+  go('pass');
+}
 function addPoints(id, n, why) {
   if (!n) return;
   var p = player(id); if (!p) return;
@@ -355,10 +469,37 @@ function clueNext(timeout) {
   c.idx++;
   if (c.idx >= c.order.length) {
     c.tour++; c.idx = 0;
-    if (c.tour > c.tours) { go('voteChoice'); return; }
+    if (c.tour > c.tours) { afterClues(); return; }
   }
   render();
   scheduleAutoGo();
+}
+/* ---------- Débat (optionnel) ---------- */
+var debateTimer = null;
+function stopDebate() { if (debateTimer) { clearInterval(debateTimer); debateTimer = null; } }
+function afterClues() {
+  stopClueTimer();
+  if (S.settings.debat > 0) {
+    S.round.debate = { left: S.settings.debat, total: S.settings.debat, paused: false };
+    go('debate');
+    beep(700, 0.06);
+    debateTimer = setInterval(function () {
+      var d = S.round && S.round.debate; if (!d || d.paused) return;
+      d.left--;
+      if (d.left <= 0) { stopDebate(); ring(); toast('Fin du débat : on vote !'); go('voteChoice'); return; }
+      if (d.left <= 3) beep(520, 0.08);
+      if (d.left === 30 && d.total > 30) { beep(880, 0.12); toast('Plus que 30 secondes'); }
+      updateDebateTimer();
+    }, 1000);
+  } else go('voteChoice');
+}
+function fmtLong(s) { var m = Math.floor(s / 60), r = s % 60; return m + ':' + (r < 10 ? '0' : '') + r; }
+function updateDebateTimer() {
+  var d = S.round.debate, circ = 2 * Math.PI * 78, urgent = d.left <= 10;
+  var el = document.getElementById('debArc');
+  if (el) { el.setAttribute('stroke-dashoffset', String(circ * (1 - d.left / d.total))); el.setAttribute('stroke', urgent ? '#E5533D' : '#F5C542'); }
+  var tx = document.getElementById('debTime');
+  if (tx) { tx.textContent = fmtLong(d.left); tx.style.color = urgent ? '#E5533D' : '#EDE6D6'; }
 }
 function scheduleAutoGo() {
   if (S.settings.autoGo && S.screen === 'clue') {
@@ -390,7 +531,13 @@ function startSecretVote(candidates, tieCount) {
   S.round.vote = { mode: 'secret', voters: S.round.alive.slice(), vIdx: 0, votes: {}, candidates: candidates || S.round.alive.slice(), tieCount: tieCount || 0, sel: null };
   go('votePass');
 }
-function tallySecret() {
+function startPointez(candidates, tieCount) {
+  S.round.vote = { mode: 'pointez', voters: S.round.alive.slice(), votes: {}, candidates: candidates || S.round.alive.slice(), tieCount: tieCount || 0 };
+  S.round.pointez = { stage: 'ready' };
+  go('pointez');
+}
+/* Les deux modes de vote passent par ce même dépouillement */
+function tallyVotes() {
   var v = S.round.vote, counts = {};
   Object.keys(v.votes).forEach(function (voter) { var t = v.votes[voter]; counts[t] = (counts[t] || 0) + 1; });
   var max = 0; Object.keys(counts).forEach(function (k) { if (counts[k] > max) max = counts[k]; });
@@ -402,17 +549,16 @@ function tallySecret() {
   else go('tie');
 }
 function accuse(id) {
-  var r = S.round; r.accused = id; r.revealed = false;
+  var r = S.round; r.accused = id; r.revealStage = null;
   var role = r.roles[id];
-  if (role !== 'agent') {
-    if (r.vote && r.vote.mode === 'secret') {
-      Object.keys(r.vote.votes).forEach(function (voter) {
-        if (r.vote.votes[voter] === id && r.roles[voter] === 'agent') addPoints(voter, 1, 'a démasqué ' + (role === 'fantome' ? 'le Fantôme' : 'la taupe'));
-      });
-    } else {
-      aliveAgents().forEach(function (a) { addPoints(a, 1, 'a démasqué ' + (role === 'fantome' ? 'le Fantôme' : 'la taupe')); });
-    }
+  // Même barème pour les deux votes : +1 à chaque agent qui a voté contre l'intrus démasqué
+  if (role !== 'agent' && r.vote && r.vote.votes) {
+    Object.keys(r.vote.votes).forEach(function (voter) {
+      if (r.vote.votes[voter] === id && r.roles[voter] === 'agent') addPoints(voter, 1, 'a démasqué ' + (role === 'fantome' ? 'le Fantôme' : 'la taupe'));
+    });
   }
+  // On garde les votes pour les montrer au verdict
+  r.lastVotes = r.vote && r.vote.votes ? { votes: r.vote.votes, drawn: !!r.vote.drawn && r.vote.drawn === id } : null;
   r.alive = r.alive.filter(function (x) { return x !== id; });
   r.out.push(id);
   go('reveal');
@@ -457,6 +603,7 @@ var MENU_SCREENS = ['home', 'rules', 'briefing', 'themes', 'noPairs', 'podium'];
 var navStack = [];
 function go(screen, isBack) {
   if (screen !== 'clue') stopClueTimer();
+  if (screen !== 'debate') stopDebate();
   if (S.screen === 'pointez' && screen !== 'pointez') stopPointez();
   if (screen === 'home') navStack = [];
   else if (!isBack && screen !== S.screen && MENU_SCREENS.indexOf(S.screen) >= 0 && MENU_SCREENS.indexOf(screen) >= 0) {
@@ -469,11 +616,12 @@ function go(screen, isBack) {
 }
 function leaveGame() { stopClueTimer(); stopPointez(); S.round = null; keepAwake(false); go('home', true); }
 function quitGame() {
-  if (!confirm('Quitter la partie en cours ? Les scores sont conservés.')) return;
-  leaveGame();
+  ask({ title: 'Quitter la partie ?', text: 'La manche en cours sera abandonnée. Les scores sont conservés.', ok: 'Quitter', cancel: 'Rester', danger: true })
+    .then(function (yes) { if (yes) leaveGame(); });
 }
 /* Bouton retour du téléphone. Renvoie false quand on est à l'accueil : on laisse alors sortir de l'appli. */
 function handleBack() {
+  if (openModal) { openModal.close(false); return true; }
   if (S.round && MENU_SCREENS.indexOf(S.screen) < 0) {
     if (S.screen === 'word') { S.round.dist.open = false; go('pass', true); return true; }
     if (S.screen === 'roundEnd') { leaveGame(); return true; }
@@ -527,9 +675,10 @@ V.rules = function () {
   '<div class="rules">' +
   '<h3>Le principe</h3><p>Tous les joueurs reçoivent le même mot secret… sauf la taupe, qui reçoit un mot proche. Personne ne sait s’il est la taupe, pas même elle.</p>' +
   '<h3>Une manche</h3><ul>' +
-    '<li><b>Distribution</b>&nbsp;: le téléphone passe de main en main, chacun découvre son mot en secret.</li>' +
+    '<li><b>Distribution</b>&nbsp;: le téléphone passe de main en main, chacun découvre son mot en secret. Un joueur ne connaît pas son mot&nbsp;? Il touche «&nbsp;Je ne connais pas ce mot&nbsp;»&nbsp;: un nouveau mot est tiré et tout le monde relit son dossier.</li>' +
     '<li><b>Indices</b>&nbsp;: à tour de rôle, chacun dit un seul mot lié au sien, en ' + S.settings.chrono + '&nbsp;secondes maximum. Ni trop précis (la taupe comprendrait), ni trop vague (on vous suspecterait).</li>' +
-    '<li><b>Vote</b>&nbsp;: vote secret sur le téléphone, ou «&nbsp;3, 2, 1, pointez&nbsp;!&nbsp;» tous ensemble.</li>' +
+    '<li><b>Débat</b> (si activé)&nbsp;: 1 ou 2 minutes pour accuser et se défendre.</li>' +
+    '<li><b>Vote</b>&nbsp;: vote secret sur le téléphone, ou «&nbsp;3, 2, 1, pointez&nbsp;!&nbsp;» tous ensemble, puis on note qui a pointé qui. En cas d’égalité on revote entre les suspects, puis le sort décide.</li>' +
     '<li><b>Dernière chance</b>&nbsp;: une taupe démasquée peut encore deviner le mot des agents pour gagner un point.</li></ul>' +
   '<h3>Les modes</h3><ul>' +
     '<li><b>Recrue</b>&nbsp;: une taupe, un seul vote. Idéal pour découvrir.</li>' +
@@ -539,7 +688,7 @@ V.rules = function () {
     '<li>Taupe qui survit jusqu’au bout&nbsp;: <b>+3</b></li>' +
     '<li>Fantôme qui survit jusqu’au bout&nbsp;: <b>+4</b></li>' +
     '<li>Dernière chance réussie&nbsp;: <b>+1</b> (taupe) ou <b>+2</b> (Fantôme)</li></ul>' +
-  '<p class="hint">Au vote «&nbsp;pointez&nbsp;», tous les agents encore en jeu marquent le point quand un intrus est démasqué.</p>' +
+  '<p class="hint">Même barème pour les deux votes&nbsp;: seuls les agents qui ont voté contre l’intrus démasqué marquent le point.</p>' +
   '<h3>Fin de partie</h3><p>Une partie se termine quand l’intrus est démasqué (mode Recrue), quand tous les intrus sont éliminés, ou quand les intrus sont aussi nombreux que les agents.</p>' +
   '</div><button class="btn push" data-act="go" data-arg="briefing">Lancer une mission</button></div>';
 };
@@ -573,6 +722,10 @@ V.briefing = function () {
       '<button class="toggle' + (st.fantome ? ' on' : '') + '" role="switch" aria-checked="' + st.fantome + '" aria-label="Mode Fantôme" data-act="toggle" data-arg="fantome"></button></div>' : '') +
     '<div class="item"><span class="grow" style="font-size:14px">Tours d’indices</span>' + stepper('tours', st.tours) + '</div>' +
     '<div class="item"><span class="grow" style="font-size:14px">Chrono par indice</span>' + stepper('chrono', st.chrono + ' s') + '</div>' +
+    '<div class="item" style="flex-wrap:wrap;padding-top:12px;padding-bottom:12px"><span style="font-size:14px;flex-basis:100%">Débat avant le vote<br><span class="hint">Chrono pour discuter avant de voter</span></span>' +
+      '<div class="chips" style="margin-top:4px">' + [[0, 'Non'], [60, '1 min'], [120, '2 min']].map(function (o) {
+        return '<button class="chip' + (st.debat === o[0] ? ' on' : '') + '" data-act="debat" data-arg="' + o[0] + '" aria-pressed="' + (st.debat === o[0]) + '">' + o[1] + '</button>';
+      }).join('') + '</div></div>' +
     '<div class="item"><span class="grow" style="font-size:14px">Départ automatique du chrono</span>' +
       '<button class="toggle' + (st.autoGo ? ' on' : '') + '" role="switch" aria-checked="' + st.autoGo + '" aria-label="Départ automatique du chrono" data-act="toggle" data-arg="autoGo"></button></div>' +
   '</div></section>' +
@@ -634,6 +787,7 @@ V.pass = function () {
       '<div style="display:flex;justify-content:center;align-items:center;width:150px;height:150px;border-radius:50%;border:2px dashed var(--line2)">' + bigAvatar(p, 118) + '</div>' +
       '<p style="margin:0;font-size:16px" class="text2">Passe le téléphone à</p>' +
       '<h1 class="display h-xl" style="word-break:break-word">' + esc(p.name.toUpperCase()) + '</h1></div>' +
+    (r.wordChanged ? '<div class="card" style="border:1px solid var(--yellow);text-align:center;font-size:14px"><b style="color:var(--yellow)">Nouveau mot&nbsp;!</b> Tout le monde relit son dossier.</div>' : '') +
     '<div class="row card" style="gap:10px;padding:12px 16px">' + ICON.eyeOff + '<span class="text2" style="font-size:14px">Les autres agents détournent le regard</span></div>' +
     '<button class="btn push" data-act="distMe">C’est moi, ' + esc(p.name) + '</button></div>';
 };
@@ -662,6 +816,8 @@ V.word = function () {
     '<button class="dossier" data-act="distToggle" aria-label="' + (d.open ? 'Refermer le dossier' : 'Ouvrir le dossier') + '" style="margin-top:12px">' +
       '<span class="tab"></span><span class="label">DOSSIER PERSONNEL</span>' + inner + '</button>' +
     '<p class="center muted" style="margin:0;font-size:14px;line-height:1.5">' + (role === 'fantome' && d.open ? 'Tu ne parleras jamais en premier.' : 'Personne ne sait s’il est la taupe.<br>Pas même toi.') + '</p>' +
+    // Bouton « mot inconnu » : pour tous ceux qui ont un mot
+    (d.open && role !== 'fantome' ? '<button class="link" data-act="unknownWord">Je ne connais pas ce mot</button>' : '') +
     '<button class="btn push" data-act="distNext"' + (d.seen ? '' : ' disabled') + '>' + (last ? 'Mémorisé, on commence' : 'Mémorisé, je passe') + '</button></div>';
 };
 
@@ -689,6 +845,21 @@ V.clue = function () {
       (c.running ? '<button class="btn blue" data-act="clueNext">Indice donné</button>'
                  : '<button class="btn" data-act="clueGo" style="font-size:20px">Go, ' + esc(cur.name) + '</button>') +
       '<button class="link" data-act="skipToVote">Passer directement au vote</button></div></div>';
+};
+
+V.debate = function () {
+  var d = S.round.debate, circ = 2 * Math.PI * 78, urgent = d.left <= 10;
+  return '<div class="screen">' + gameTop('Débat · ' + esc(S.round.theme.nom)) +
+    '<div class="col center grow" style="align-items:center;justify-content:center;gap:20px">' +
+      '<div class="ring"><svg width="176" height="176" viewBox="0 0 176 176" aria-hidden="true">' +
+        '<circle cx="88" cy="88" r="78" fill="none" stroke="#1A1F2C" stroke-width="10"/>' +
+        '<circle id="debArc" cx="88" cy="88" r="78" fill="none" stroke="' + (urgent ? '#E5533D' : '#F5C542') + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + circ + '" stroke-dashoffset="' + (circ * (1 - d.left / d.total)) + '" style="transition:stroke-dashoffset .9s linear"/></svg>' +
+        '<div class="in"><span id="debTime" role="timer" class="display" style="font-size:56px;color:' + (urgent ? '#E5533D' : '#EDE6D6') + '">' + fmtLong(d.left) + '</span>' +
+        (d.paused ? '<span class="mono" style="color:var(--yellow)">En pause</span>' : '') + '</div></div>' +
+      '<h1 class="display h-l">DÉBATTEZ&nbsp;!</h1>' +
+      '<p class="text2" style="margin:0;font-size:15px;line-height:1.5">Accusez, défendez-vous, demandez des explications sur les indices.<br>Personne ne montre son mot&nbsp;!</p></div>' +
+    '<div class="grid2"><button class="btn ghost" data-act="debatePause">' + (d.paused ? 'Reprendre' : 'Pause') + '</button>' +
+    '<button class="btn" data-act="debateEnd">Passer au vote</button></div></div>';
 };
 
 V.voteChoice = function () {
@@ -728,17 +899,17 @@ V.voteGrid = function () {
 
 V.tie = function () {
   var v = S.round.vote;
-  return '<div class="screen">' + gameTop('Vote secret') +
+  return '<div class="screen">' + gameTop(v.mode === 'secret' ? 'Vote secret' : 'Vote à main levée') +
     '<h1 class="display h-l" style="margin-top:20px">ÉGALITÉ&nbsp;!</h1>' +
     '<p class="text2" style="font-size:16px;line-height:1.5;margin:0">Les suspects à égalité&nbsp;:</p>' +
     '<div class="col">' + v.tied.map(function (id) { var p = player(id); return '<div class="score-row">' + avatar(p) + '<span class="pname">' + esc(p.name) + '</span><span class="total">' + v.counts[id] + ' vote' + (v.counts[id] > 1 ? 's' : '') + '</span></div>'; }).join('') + '</div>' +
-    '<p class="hint" style="margin:0">On revote, uniquement entre eux. Défendez-vous&nbsp;!</p>' +
+    '<p class="hint" style="margin:0">On revote, uniquement entre eux. Défendez-vous&nbsp;! S’il y a encore égalité, le sort décidera.</p>' +
     '<button class="btn push" data-act="revote">Revoter</button></div>';
 };
 
 V.tieDraw = function () {
   var v = S.round.vote, p = player(v.drawn);
-  return '<div class="screen">' + gameTop('Vote secret') +
+  return '<div class="screen">' + gameTop(v.mode === 'secret' ? 'Vote secret' : 'Vote à main levée') +
     '<h1 class="display h-l" style="margin-top:20px">TOUJOURS ÉGALITÉ…</h1>' +
     '<p class="text2" style="font-size:16px;line-height:1.5;margin:0">Le sort désigne le suspect&nbsp;:</p>' +
     '<div class="col center" style="align-items:center;gap:12px;margin-top:10px">' + bigAvatar(p, 110) + '<h2 class="display h-l">' + esc(p.name.toUpperCase()) + '</h2></div>' +
@@ -746,13 +917,15 @@ V.tieDraw = function () {
 };
 
 V.pointez = function () {
-  var pz = S.round.pointez || { stage: 'ready' };
+  var pz = S.round.pointez || { stage: 'ready' }, v = S.round.vote;
   if (pz.stage === 'ready') {
+    var tieTxt = v.tieCount ? '<div class="card" style="border:1px solid var(--red)"><b>Revote entre&nbsp;:</b> ' +
+      v.candidates.map(function (id) { return esc(player(id).name); }).join(', ') + '</div>' : '';
     return '<div class="screen">' + gameTop('Vote à main levée') +
       '<div class="col center grow" style="align-items:center;justify-content:center;gap:18px">' +
         '<img src="assets/icone-192.png" alt="" width="110" height="110" style="border-radius:26px">' +
         '<h1 class="display h-l">TOUT LE MONDE<br>EST&nbsp;PRÊT&nbsp;?</h1>' +
-        '<p class="text2" style="margin:0;font-size:15px;line-height:1.5">Posez le téléphone au milieu de la table.<br>Au signal, pointez votre suspect du doigt.</p></div>' +
+        '<p class="text2" style="margin:0;font-size:15px;line-height:1.5">Posez le téléphone au milieu de la table.<br>Au signal, pointez votre suspect du doigt<br>et ne bougez plus&nbsp;!</p>' + tieTxt + '</div>' +
       '<button class="btn red" data-act="pointezStart">Lancer le compte à rebours</button></div>';
   }
   if (pz.stage === 'video') {
@@ -760,17 +933,24 @@ V.pointez = function () {
       '<div class="video-box"><video id="pzVideo" src="assets/taupe-pointez.mp4" playsinline preload="auto" aria-label="La taupe annonce le décompte : trois, deux, un, pointez"></video>' +
       '<button class="skip" data-act="pointezEnd">Passer</button></div></div>';
   }
-  var alive = S.round.alive;
+  // Saisie : qui pointe qui
+  var done = v.voters.filter(function (id) { return v.votes[id]; }).length;
   return '<div class="screen">' + gameTop('Vote à main levée') +
-    '<div class="col" style="gap:6px"><h1 class="display h-m">QUI A REÇU LE PLUS DE&nbsp;DOIGTS&nbsp;?</h1>' +
-    '<p class="text2" style="margin:0;font-size:14px">En cas d’égalité, relancez le décompte entre les suspects.</p></div>' +
-    '<div class="col" style="gap:8px">' + alive.map(function (id) {
-      var p = player(id), on = id === pz.sel;
-      return '<button class="score-row" style="min-height:54px;border:2px solid ' + (on ? 'var(--red)' : 'var(--surface)') + ';' + (on ? 'background:#2A1A1A;' : '') + 'color:var(--text);text-align:left;width:100%" data-act="pointezSel" data-arg="' + id + '" aria-pressed="' + on + '">' +
-        avatar(p) + '<span class="pname" style="font-weight:600">' + esc(p.name) + '</span>' + (on ? ICON.cross : '') + '</button>';
+    '<div class="col" style="gap:6px"><h1 class="display h-m">QUI POINTE QUI&nbsp;?</h1>' +
+    '<p class="text2" style="margin:0;font-size:14px">Gardez la pose&nbsp;! Pour chaque joueur, touche la personne qu’il pointe du doigt.</p></div>' +
+    '<div class="col" style="gap:8px">' + v.voters.map(function (vid) {
+      var p = player(vid), targets = v.candidates.filter(function (c) { return c !== vid; });
+      return '<div class="card" style="padding:10px 12px"><div class="row" style="gap:10px">' + avatar(p, 30) +
+        '<span class="pname" style="font-weight:600">' + esc(p.name) + '</span><span class="hint">pointe…</span></div>' +
+        '<div class="chips" style="margin-top:8px">' + targets.map(function (t) {
+          var tp = player(t), on = v.votes[vid] === t;
+          return '<button class="chip tgt' + (on ? ' on-red' : '') + '" data-act="pzVote" data-arg="' + vid + ':' + t + '" aria-pressed="' + on + '" aria-label="' + esc(p.name) + ' pointe ' + esc(tp.name) + '">' +
+            avatar(tp, 22) + '<span>' + esc(tp.name) + '</span></button>';
+        }).join('') + '</div></div>';
     }).join('') + '</div>' +
-    '<div class="col push"><button class="btn red" data-act="pointezAccuse"' + (pz.sel ? '' : ' disabled') + '>' + (pz.sel ? 'Accuser ' + esc(player(pz.sel).name) : 'Choisis le suspect désigné') + '</button>' +
-    '<button class="link" data-act="pointezAgain">Égalité ? Relancer le décompte</button></div></div>';
+    '<div class="col push"><button class="btn red" data-act="pzValidate"' + (done === v.voters.length ? '' : ' disabled') + '>' +
+      (done === v.voters.length ? 'Valider les votes' : 'Encore ' + (v.voters.length - done) + ' joueur' + (v.voters.length - done > 1 ? 's' : '') + ' à saisir') + '</button>' +
+    '<button class="link" data-act="pointezAgain">Relancer le décompte</button></div></div>';
 };
 var pzTimer = null;
 function stopPointez() {
@@ -795,23 +975,64 @@ V.reveal = function () {
   var label = role === 'taupe' ? 'UNE TAUPE' : (role === 'fantome' ? 'LE FANTÔME' : 'UN AGENT');
   if (role === 'taupe' && effectiveTaupes() === 1) label = 'LA TAUPE';
   var good = role !== 'agent';
-  if (!r.revealed) {
+  if (!r.revealStage) {
     return '<div class="screen">' + gameTop('Verdict') +
       '<div class="col center grow" style="align-items:center;justify-content:center;gap:16px">' + bigAvatar(p, 120) +
-      '<p class="text2" style="margin:0;font-size:17px">Le suspect désigné est</p>' +
-      '<h1 class="display h-xl">' + esc(p.name.toUpperCase()) + '</h1></div>' +
+      '<p class="text2" style="margin:0;font-size:17px">' + (r.lastVotes && r.lastVotes.drawn ? 'Le sort a désigné' : 'Le suspect désigné est') + '</p>' +
+      '<h1 class="display h-xl">' + esc(p.name.toUpperCase()) + '</h1>' + votesBlock() + '</div>' +
       '<button class="btn red" data-act="revealNow">Révéler son identité</button></div>';
   }
+  if (r.revealStage === 'suspense') {
+    return '<div class="screen">' + gameTop('Verdict') +
+      '<div class="col center grow" style="align-items:center;justify-content:center;gap:22px">' +
+        '<div class="suspense-avatar">' + bigAvatar(p, 120) + '</div>' +
+        '<p class="mono" style="font-size:14px;color:var(--yellow)">Ouverture du dossier<span class="dots"></span></p>' +
+        '<div class="scanbar" aria-hidden="true"><span></span></div></div></div>';
+  }
   return '<div class="screen">' + gameTop('Verdict') +
-    '<div class="card col center" style="align-items:center;gap:12px;padding:26px 16px;position:relative">' + bigAvatar(p, 96) +
+    '<div class="card col center" style="align-items:center;gap:12px;padding:26px 16px;position:relative;overflow:hidden">' + bigAvatar(p, 96) +
       '<p class="text2" style="margin:0;font-size:15px">' + esc(p.name) + ' était…</p>' +
-      '<h1 class="display h-l" style="color:' + (good ? 'var(--red)' : 'var(--blue)') + '">' + label + '</h1>' +
-      '<span class="stamp" style="position:absolute;top:22px;right:12px;transform:rotate(12deg);' + (good ? '' : 'border-color:var(--blue);color:var(--blue)') + '">' + (good ? 'DÉMASQUÉ' : 'ERREUR') + '</span></div>' +
+      '<h1 class="display h-l reveal-title" style="color:' + (good ? 'var(--red)' : 'var(--blue)') + '">' + label + '</h1>' +
+      '<span class="stamp slam" style="position:absolute;top:22px;right:12px;' + (good ? '' : 'border-color:var(--blue);color:var(--blue)') + '">' + (good ? 'DÉMASQUÉ' : 'ERREUR') + '</span></div>' +
     '<p class="text2 center" style="font-size:16px;line-height:1.5;margin:0">' +
       (good ? (role === 'fantome' ? 'Bien joué, le Fantôme est démasqué&nbsp;!' : 'Bien joué, la taupe est démasquée&nbsp;!')
             : (r.mode === 'recrue' ? 'Raté&nbsp;! Vous avez accusé un innocent…' : 'Raté&nbsp;! ' + esc(p.name) + ' est éliminé à tort.')) + '</p>' +
     '<button class="btn push" data-act="afterReveal">' + (good ? 'Dernière chance de ' + esc(p.name) : 'Continuer') + '</button></div>';
 };
+/* Qui a voté contre qui (montré avant la révélation) */
+function votesBlock() {
+  var r = S.round, lv = r.lastVotes;
+  if (!lv || !lv.votes || !Object.keys(lv.votes).length) return '';
+  var byTarget = {};
+  Object.keys(lv.votes).forEach(function (voter) { (byTarget[lv.votes[voter]] = byTarget[lv.votes[voter]] || []).push(voter); });
+  var targets = Object.keys(byTarget).sort(function (a, b) { return byTarget[b].length - byTarget[a].length; });
+  return '<div class="card" style="width:100%;text-align:left;padding:12px 14px"><span class="mono" style="letter-spacing:1px">Les votes</span>' +
+    targets.map(function (t) {
+      var tp = player(t), n = byTarget[t].length;
+      return '<div class="row" style="gap:10px;margin-top:10px;align-items:flex-start">' + avatar(tp, 26) +
+        '<span class="grow" style="font-size:14px;line-height:1.4"><b>' + esc(tp.name) + '</b> <span class="muted">· ' + n + ' vote' + (n > 1 ? 's' : '') + '</span><br>' +
+        '<span class="text2">' + byTarget[t].map(function (v) { return esc(player(v).name); }).join(', ') + '</span></span></div>';
+    }).join('') + '</div>';
+}
+function startReveal() {
+  var r = S.round; if (r.revealStage) return;
+  r.revealStage = 'suspense'; render();
+  // Roulement de tambour qui accélère
+  var t = 0, gap = 190;
+  for (var i = 0; i < 12; i++) {
+    (function (d, f) { setTimeout(function () { beep(f, 0.05, 0.18); }, d); })(t, 180 + i * 12);
+    t += gap; gap = Math.max(60, gap * 0.82);
+  }
+  vibrate([40, 120, 40, 100, 40, 80, 40, 60, 40, 40]);
+  setTimeout(function () {
+    if (S.screen !== 'reveal' || S.round !== r) return;
+    r.revealStage = 'done'; render();
+    var good = r.roles[r.accused] !== 'agent';
+    if (good) { beep(140, 0.35, 0.4); setTimeout(function () { beep(990, 0.3); }, 120); }
+    else { beep(300, 0.25, 0.3); setTimeout(function () { beep(220, 0.45, 0.3); }, 220); }
+    vibrate(good ? [90, 40, 220] : [300]);
+  }, Math.round(t) + 250);
+}
 function effectiveTaupes() { var n = 0; Object.keys(S.round.roles).forEach(function (k) { if (S.round.roles[k] === 'taupe') n++; }); return n; }
 
 V.lastChance = function () {
@@ -910,7 +1131,11 @@ var A = {
   go: function (to) { go(to); },
   quit: quitGame,
   delPlayer: function (id) { S.players = S.players.filter(function (p) { return p.id !== id; }); recolor(); persist(); render(); },
-  resetScores: function () { if (!confirm('Remettre tous les scores à zéro ?')) return; S.players.forEach(function (p) { p.score = 0; }); S.manche = 0; persist(); render(); },
+  resetScores: function () {
+    ask({ title: 'Scores à zéro ?', text: 'Tous les joueurs repartent de 0 point.', ok: 'Remettre à zéro', danger: true }).then(function (yes) {
+      if (!yes) return; S.players.forEach(function (p) { p.score = 0; }); S.manche = 0; persist(); render();
+    });
+  },
   set: function (arg) { var kv = arg.split(':'); S.settings[kv[0]] = kv[1]; persist(); render(); },
   toggle: function (k) { S.settings[k] = !S.settings[k]; persist(); render(); },
   step: function (arg) {
@@ -938,7 +1163,11 @@ var A = {
     if (!allOn) S.themesOn = S.themesOn.concat(ids);
     persist(); render();
   },
-  resetHistory: function () { if (!confirm('Toutes les paires redeviendront disponibles. Continuer ?')) return; S.history = {}; persist(); render(); toast('Historique remis à zéro.'); },
+  resetHistory: function () {
+    ask({ title: 'Effacer l’historique ?', text: 'Toutes les paires déjà jouées redeviendront disponibles.', ok: 'Effacer' }).then(function (yes) {
+      if (!yes) return; S.history = {}; persist(); render(); toast('Historique remis à zéro.');
+    });
+  },
   resetHistoryStart: function () { S.history = {}; persist(); startRound(); },
   start: function () { if (!S.themesOn.length) { toast('Choisis au moins un thème.'); return; } startRound(); },
   distMe: function () { S.round.dist.open = false; S.round.dist.seen = false; go('word'); },
@@ -946,29 +1175,50 @@ var A = {
   distNext: function () {
     var r = S.round; r.dist.open = false;
     r.dist.idx++;
-    if (r.dist.idx >= S.players.length) { setupClues(S.settings.tours); return; }
+    if (r.dist.idx >= S.players.length) { r.wordChanged = false; setupClues(S.settings.tours); return; }
     go('pass');
   },
   clueGo: clueGo,
   clueNext: function () { clueNext(false); },
-  skipToVote: function () { if (confirm('Arrêter les indices et passer au vote ?')) go('voteChoice'); },
+  skipToVote: function () {
+    ask({ title: 'Passer au vote ?', text: 'Le tour d’indices s’arrête ici.', ok: 'Passer au vote' }).then(function (yes) { if (yes) afterClues(); });
+  },
   voteSecret: function () { startSecretVote(); },
-  votePointez: function () { S.round.vote = { mode: 'pointez' }; S.round.pointez = { stage: 'ready', sel: null }; go('pointez'); },
+  votePointez: function () { startPointez(); },
   voteMe: function () { S.round.vote.sel = null; go('voteGrid'); },
   voteSel: function (id) { S.round.vote.sel = id; render(); },
   voteConfirm: function () {
     var v = S.round.vote; if (!v.sel) return;
     v.votes[v.voters[v.vIdx]] = v.sel; v.sel = null; v.vIdx++;
-    if (v.vIdx >= v.voters.length) tallySecret(); else go('votePass');
+    if (v.vIdx >= v.voters.length) tallyVotes(); else go('votePass');
   },
-  revote: function () { var v = S.round.vote; startSecretVote(v.tied, v.tieCount + 1); },
+  revote: function () {
+    var v = S.round.vote;
+    if (v.mode === 'pointez') startPointez(v.tied, v.tieCount + 1);
+    else startSecretVote(v.tied, v.tieCount + 1);
+  },
   accuseDrawn: function () { accuse(S.round.vote.drawn); },
   pointezStart: pointezStart,
+  debatePause: function () { var d = S.round.debate; d.paused = !d.paused; render(); },
+  debateEnd: function () { stopDebate(); go('voteChoice'); },
+  debat: function (v) { S.settings.debat = +v; persist(); render(); },
+  unknownWord: function () {
+    ask({ title: 'Mot inconnu ?', text: 'Un nouveau mot est tiré pour tout le monde, et chacun relit son dossier depuis le début. Personne ne saura qui a demandé.', ok: 'Nouveau mot', cancel: 'Je le garde' })
+      .then(function (yes) { if (yes) replaceWord(); });
+  },
   pointezEnd: function () { stopPointez(); S.round.pointez.stage = 'pick'; render(); },
-  pointezSel: function (id) { S.round.pointez.sel = id; render(); },
-  pointezAgain: function () { S.round.pointez = { stage: 'ready', sel: null }; render(); },
-  pointezAccuse: function () { var s = S.round.pointez.sel; if (s) accuse(s); },
-  revealNow: function () { S.round.revealed = true; vibrate(120); render(); },
+  pzVote: function (arg) {
+    var kv = arg.split(':'), v = S.round.vote;
+    v.votes[kv[0]] = v.votes[kv[0]] === kv[1] ? undefined : kv[1];
+    if (!v.votes[kv[0]]) delete v.votes[kv[0]];
+    var y = window.scrollY; render(); window.scrollTo(0, y);
+  },
+  pzValidate: function () {
+    var v = S.round.vote;
+    if (v.voters.every(function (id) { return v.votes[id]; })) tallyVotes();
+  },
+  pointezAgain: function () { S.round.vote.votes = {}; S.round.pointez = { stage: 'ready' }; render(); },
+  revealNow: startReveal,
   afterReveal: afterReveal,
   lcSkip: function () { S.round.lastChance = { guess: '', submitted: true }; render(); },
   lcJudge: function (v) { judgeLastChance(v === '1'); },

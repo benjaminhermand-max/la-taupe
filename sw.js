@@ -1,12 +1,21 @@
 /* La Taupe — service worker
  * Réseau d'abord (pour toujours avoir la dernière version),
  * cache en secours (pour jouer sans connexion).
+ * Pense à changer le numéro de CACHE à chaque mise à jour.
  */
-var CACHE = 'la-taupe-v7';
+var CACHE = 'la-taupe-v8';
 var FILES = [
   './', 'index.html', 'paires.js', 'manifest.json',
   'assets/icone-192.png', 'assets/icone-512.png', 'assets/favicon.png',
-  'assets/taupe-pointez.mp4'
+  'assets/taupe-pointez.mp4',
+  'assets/fonts/big-shoulders-display-latin-700-normal.woff2',
+  'assets/fonts/big-shoulders-display-latin-900-normal.woff2',
+  'assets/fonts/ibm-plex-mono-latin-500-normal.woff2',
+  'assets/fonts/ibm-plex-mono-latin-600-normal.woff2',
+  'assets/fonts/inter-latin-400-normal.woff2',
+  'assets/fonts/inter-latin-500-normal.woff2',
+  'assets/fonts/inter-latin-600-normal.woff2',
+  'assets/fonts/inter-latin-700-normal.woff2'
 ];
 
 self.addEventListener('install', function (e) {
